@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEB</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="colors.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <meta name="google-signin-client_id" content="547433799789-lrg21o41njrq59o8dejkg53lejefl9i6.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    
+</head>
+<body>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <script>
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+        }
+    </script>
+    <a href="#" onclick="signOut();">Sign out</a>
+    <script>
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+            console.log('User signed out.');
+            });
+        }
+    </script>
+    <h1><a onclick="fetchPage('web');">WEB</a></h1>
+    <input type="button" value="night" class="toggle" onclick="clickButton()">
+    <div id="grid">
+        <div id="leftDiv">
+            <ol id="nav"></ol>
+        </div>
+        <div id="rightDiv">
+            <p>
+                <article></article>
+            </p>
+        </div>
+    </div>
+    <script>
+        function fetchPage(name) {
+            fetch(name).then(function(response) {
+                response.text().then(function(text) {
+                    document.querySelector('article').innerHTML = text;
+                })
+            })
+        }
+
+        if(location.hash) {
+            fetchPage(location.hash.substr(2));
+        }
+        else {
+            fetchPage('welcome')
+        }
+
+        fetch('list').then(function(response) {
+            response.text().then(function(text) {
+                var lists = text.split(',');
+                var list='';
+                for(var key in lists) {
+                    list += '<li><a href="#!'+lists[key]+'" onclick="fetchPage(\''+lists[key]+'\');">'+lists[key]+'</a></li>';
+                }
+                document.querySelector('#nav').innerHTML = list;
+            })
+        })
+    </script>
+</body>
+</html>
